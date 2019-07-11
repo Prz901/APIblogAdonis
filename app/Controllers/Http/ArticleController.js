@@ -1,6 +1,6 @@
 "use strict";
 
-const Articles = use("App/Models/Article");
+const Article = use("App/Models/Article");
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
@@ -20,23 +20,10 @@ class ArticleController {
    * @param {View} ctx.view
    */
   async index({ request, auth, response, view }) {
-    const articles = await Articles.all();
+    const articles = await Article.all();
 
     return articles;
   }
-
-  /*
-   * Render a form to be used for creating a new article.
-   * GET articles/create
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   
-  async create ({ request, response, view }) {
-  }
-  */
 
   /**
    * Create/save a new article.
@@ -49,7 +36,7 @@ class ArticleController {
   async store({ request, auth }) {
     const data = request.only(["title", "body", "categories_id"]);
     data.user_id = auth.user.id;
-    const article = await Articles.create({ ...data });
+    const article = await Article.create({ ...data });
 
     return article;
   }
@@ -64,35 +51,11 @@ class ArticleController {
    * @param {View} ctx.view
    */
   async show({ params }) {
-    const articles = await Articles.findByOrFail(params);
-    return articles;
-  }
-  /**
-   * Display a single article.
-   * GET articles/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show({ params }) {
-    const articles = await Articles.findByOrFail(params);
+    const articles = await Article.findByOrFail(params);
 
     return articles;
   }
 
-  /*
-   * Render a form to update an existing article.
-   * GET articles/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   
-  async edit({ params, request, response, view }) {}
-  */
   /**
    * Update article details.
    * PUT or PATCH articles/:id
@@ -101,7 +64,14 @@ class ArticleController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {}
+  async update({ params, request, response }) {
+    const data = request.all();
+    const { id } = params;
+    const articles = await Article.findBy("id", id);
+    articles.merge(data);
+    await articles.save();
+    return response.send(articles);
+  }
 
   /**
    * Delete a article with id.
@@ -111,8 +81,8 @@ class ArticleController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, auth, response }) {
-    const articles = await Articles.findByOrFail("id", params.id);
+  async destroy({ params }) {
+    const articles = await Article.findByOrFail("id", params.id);
 
     await articles.delete();
   }

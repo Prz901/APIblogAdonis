@@ -19,7 +19,11 @@ class CategoryController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response, view }) {}
+  async index() {
+    const categories = await Category.all();
+
+    return categories;
+  }
 
   /**
    * Create/save a new category.
@@ -52,17 +56,6 @@ class CategoryController {
   }
 
   /**
-   * Render a form to update an existing category.
-   * GET categories/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit({ params, request, response, view }) {}
-
-  /**
    * Update category details.
    * PUT or PATCH categories/:id
    *
@@ -70,7 +63,14 @@ class CategoryController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {}
+  async update({ params, request, response }) {
+    const data = request.all();
+    const { id } = params;
+    const categories = await Category.findBy("id", id);
+    categories.merge(data);
+    await categories.save();
+    return response.send(categories);
+  }
 
   /**
    * Delete a category with id.
@@ -80,7 +80,11 @@ class CategoryController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ params, request, response }) {}
+  async destroy({ params }) {
+    const categories = await Category.findByOrFail("id", params.id);
+
+    await categories.delete();
+  }
 }
 
 module.exports = CategoryController;

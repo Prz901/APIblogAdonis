@@ -4,8 +4,8 @@
 const Model = use("Model");
 
 class Category extends Model {
-  article() {
-    return this.belongsTo("App/Models/Articles", "id", "categories_id");
+  articles() {
+    return this.hasMany("App/Models/Article", "id", "categories_id");
   }
 }
 

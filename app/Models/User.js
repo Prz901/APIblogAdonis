@@ -35,7 +35,7 @@ class User extends Model {
     return this.hasMany("App/Models/Token");
   }
   article() {
-    return this.belongsTo("App/Models/Articles", "id", "user_id");
+    return this.hasMany("App/Models/Article", "id", "user_id");
   }
 }
 

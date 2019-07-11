@@ -19,18 +19,22 @@ const Route = use("Route");
 Route.post("/register", "AuthController.register");
 Route.post("/authenticate", "AuthController.authenticate");
 
+Route.get("/users", "UserController.index");
+Route.get("/users/:id", "UserController.show");
+Route.put("/users/:id", "UserController.update");
+Route.delete("/users/:id", "UserController.destroy");
+
 Route.post("/categories", "CategoryController.store");
 Route.get("/categories/:id", "CategoryController.show");
-Route.delete("/categories/:id", "CategoryController.delete");
+Route.get("/categories", "CategoryController.index");
+Route.delete("/categories/:id", "CategoryController.destroy");
+Route.put("/categories/:id", "CategoryController.update");
+
+Route.get("/categories/:id/articles", "ArticleCategoryController.index");
+Route.get("/user/:id/articles", "ArticleUserController.index");
 
 Route.group(() => {
   Route.resource("articles", "ArticleController")
     .apiOnly()
-    .except("create", "edit", "update");
+    .except("create", "edit");
 }).middleware("auth");
-
-// Route.group(() => {
-//   Route.resource("categories", "CategoryController")
-//     .apiOnly()
-//     .except("create", "edit", "update");
-// });
